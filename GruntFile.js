@@ -37,7 +37,19 @@ module.exports = function(grunt) {
                     'src/utils.js',
                     //Include all files in src/models
                     'src/models/*.js'
-                    // example to exclude files: '!src/models/excludeMe*'
+                    // example to exclude files: '!src/models/excludeMe*',
+                    ,
+                    '!src/models/boxPlot*',
+                    '!src/models/bullet*',
+                    '!src/models/candlestick*',
+                    '!src/models/cumulativeLine*',
+                    '!src/models/discreteBar*',
+                    '!src/models/forceDirectedGraph*',
+                    '!src/models/ohlc*',
+                    '!src/models/parallelCoordinates*',
+                    '!src/models/sankey*',
+                    '!src/models/sparkline*',
+                    '!src/models/sunburst*'
                 ],
                 dest: 'build/nv.d3.js'
             }
@@ -114,42 +126,43 @@ module.exports = function(grunt) {
                     'build/nv.d3.min.css' : ['build/nv.d3.css']
                 }
             }
-        },
-        karma: {
-            unit: {
-                options: {
-                    logLevel: 'ERROR',
-                    browsers: ['Firefox'],
-                    frameworks: [ 'mocha', 'sinon-chai' ],
-                    reporters: [ 'spec', 'junit', 'coverage'],
-                    singleRun: true,
-                    preprocessors: {
-                        'src/*.js': ['coverage'],
-                        'src/models/*.js': ['coverage'],
-                        'test/mocha/*.coffee': ['coffee']
-                    },
-                    files: [
-                        'bower_components/d3/d3.js',
-                        'src/*.js',
-                        'src/models/*.js',
-                        'test/mocha/*.coffee'
-                    ],
-                    exclude: [
-                        'src/intro.js',
-                        'src/outro.js',
-                        //Files we don't want to test.
-                        'src/models/lineWith*',
-                        'src/models/parallelCoordinates*',
-                        'src/models/multiBarTime*',
-                        'src/models/indented*',
-                        'src/models/linePlus*',
-                        'src/models/ohlcBar.js',
-                        'src/models/candlestickBar.js',
-                        'src/models/multiChart.js'
-                    ]
-                }
-            }
         }
+        // ,
+        // karma: {
+        //     unit: {
+        //         options: {
+        //             logLevel: 'ERROR',
+        //             browsers: ['Firefox'],
+        //             frameworks: [ 'mocha', 'sinon-chai' ],
+        //             reporters: [ 'spec', 'junit', 'coverage'],
+        //             singleRun: true,
+        //             preprocessors: {
+        //                 'src/*.js': ['coverage'],
+        //                 'src/models/*.js': ['coverage'],
+        //                 'test/mocha/*.coffee': ['coffee']
+        //             },
+        //             files: [
+        //                 'bower_components/d3/d3.js',
+        //                 'src/*.js',
+        //                 'src/models/*.js',
+        //                 'test/mocha/*.coffee'
+        //             ],
+        //             exclude: [
+        //                 'src/intro.js',
+        //                 'src/outro.js',
+        //                 //Files we don't want to test.
+        //                 'src/models/lineWith*',
+        //                 'src/models/parallelCoordinates*',
+        //                 'src/models/multiBarTime*',
+        //                 'src/models/indented*',
+        //                 'src/models/linePlus*',
+        //                 'src/models/ohlcBar.js',
+        //                 'src/models/candlestickBar.js',
+        //                 'src/models/multiChart.js'
+        //             ]
+        //         }
+        //     }
+        // }
     });
 
     grunt.loadNpmTasks('grunt-contrib-watch');
@@ -159,10 +172,10 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-postcss');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
-    grunt.loadNpmTasks('grunt-karma');
+    // grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-text-replace');
 
-    grunt.registerTask('default', ['concat', 'copy', 'postcss', 'karma:unit']);
+    grunt.registerTask('default', ['concat', 'copy', 'postcss'/*, 'karma:unit'*/]);
     grunt.registerTask('production', ['concat', 'uglify', 'copy', 'postcss', 'cssmin', 'replace']);
     grunt.registerTask('release', ['production']);
     grunt.registerTask('lint', ['jshint']);
