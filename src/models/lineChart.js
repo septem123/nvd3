@@ -11,7 +11,7 @@ nv.models.lineChart = function() {
         , legend = nv.models.legend()
         , interactiveLayer = nv.interactiveGuideline()
         , tooltip = nv.models.tooltip()
-        , focus = nv.models.focus(nv.models.line())
+        , focus = nv.models.focus(nv.models.historicalBar())
         ;
 
     var margin = {top: 30, right: 20, bottom: 50, left: 60}
@@ -28,10 +28,11 @@ nv.models.lineChart = function() {
         , x
         , y
         , focusEnable = false
+        , stackedEnable = false
         , state = nv.utils.state()
         , defaultState = null
         , noData = null
-        , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'stateChange', 'changeState', 'renderEnd')
+        , dispatch = d3.dispatch('brush', 'tooltipShow', 'tooltipHide', 'stateChange', 'changeState', 'renderEnd')
         , duration = 250
         ;
 
@@ -83,7 +84,10 @@ nv.models.lineChart = function() {
         if (showXAxis) renderWatch.models(xAxis);
         if (showYAxis) renderWatch.models(yAxis);
 
-        selection.each(function(data) {
+        selection.each(function(chartData) {
+            var data,line2Data;
+            if(chartData.length){ line2Data = data = chartData;}else{data = chartData.lineData; line2Data = chartData.line2Data;}
+
             var container = d3.select(this);
             nv.utils.initSVG(container);
             var availableWidth = nv.utils.availableWidth(width, container, margin),
@@ -261,10 +265,10 @@ nv.models.lineChart = function() {
                 g.select('.nv-focusWrap')
                     .style('display', focusEnable ? 'initial' : 'none')
                     .attr('transform', 'translate(0,' + ( availableHeight + margin.bottom + focus.margin().top) + ')')
-                    .datum(data.filter(function(d) { return !d.disabled; }))
+                    .datum(line2Data.filter(function(d) { return !d.disabled; }))
                     .call(focus);
                 var extent = focus.brush.empty() ? focus.xDomain() : focus.brush.extent();
-                if (extent !== null) {
+                if (extent) {
                     onBrush(extent);
                 }
             }
@@ -475,6 +479,9 @@ nv.models.lineChart = function() {
         noData:    {get: function(){return noData;}, set: function(_){noData=_;}},
         // Focus options, mostly passed onto focus model.
         focusEnable:    {get: function(){return focusEnable;}, set: function(_){focusEnable=_;}},
+        stackedEnable:    {get: function(){return stackedEnable;}, set: function(_){
+            stackedEnable=_;
+        }},
         focusHeight:     {get: function(){return focus.height();}, set: function(_){focus.height(_);}},
         focusShowAxisX:    {get: function(){return focus.showXAxis();}, set: function(_){focus.showXAxis(_);}},
         focusShowAxisY:    {get: function(){return focus.showYAxis();}, set: function(_){focus.showYAxis(_);}},
@@ -512,7 +519,7 @@ nv.models.lineChart = function() {
         }},
         interpolate: {get: function(){return lines.interpolate();}, set: function(_){
             lines.interpolate(_);
-            focus.interpolate(_);
+            // focus.interpolate(_);
         }},
         xTickFormat: {get: function(){return xAxis.tickFormat();}, set: function(_){
             xAxis.tickFormat(_);

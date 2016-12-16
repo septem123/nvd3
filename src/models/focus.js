@@ -28,7 +28,7 @@ nv.models.focus = function(content) {
         ;
 
     content.interactive(false);
-    content.pointActive(function(d) { return false; });
+    content.pointActive && content.pointActive(function(d) { return false; });
 
     //============================================================
     // Private Variables
