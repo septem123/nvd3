@@ -481,6 +481,7 @@ nv.models.lineChart = function() {
         focusEnable:    {get: function(){return focusEnable;}, set: function(_){focusEnable=_;}},
         stackedEnable:    {get: function(){return stackedEnable;}, set: function(_){
             stackedEnable=_;
+            lines.arhatArea(stackedEnable);
         }},
         focusHeight:     {get: function(){return focus.height();}, set: function(_){focus.height(_);}},
         focusShowAxisX:    {get: function(){return focus.showXAxis();}, set: function(_){focus.showXAxis(_);}},
