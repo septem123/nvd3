@@ -230,7 +230,7 @@ nv.models.scatter = function() {
                                     return [nv.utils.NaNtoZero(x(pX))+ Math.random() * 1e-4,
                                             nv.utils.NaNtoZero(y(pY))+ Math.random() * 1e-4,
                                         groupIndex,
-                                        pointIndex, point]; //temp hack to add noise until I think of a better way so there are no duplicates
+                                        pointIndex, point, group.selected]; //temp hack to add noise until I think of a better way so there are no duplicates
                                 })
                                 .filter(function(pointArray, pointIndex) {
                                     return pointActive(pointArray[4], pointIndex); // Issue #237.. move filter to after map, so pointIndex is correct!
@@ -260,7 +260,8 @@ nv.models.scatter = function() {
                         return {
                             'data': bounds.clip(d),
                             'series': vertices[i][2],
-                            'point': vertices[i][3]
+                            'point': vertices[i][3],
+                            'selected':vertices[i][5] //arhat hack
                         }
                     });
 
@@ -320,7 +321,9 @@ nv.models.scatter = function() {
 
                         var pos = {
                             left: x(getX(point, d.point)) + box.left + scrollLeft + margin.left + 10,
-                            top: y(getY(point, d.point)) + box.top + scrollTop + margin.top + 10
+                            top: y(getY(point, d.point)) + box.top + scrollTop + margin.top + 10,
+                            lineLeft : (point.x - x.domain()[0]) / (x.domain()[1] - x.domain()[0]) * nv.utils.availableWidth(width, container, margin),
+                            lineTop : (point.y - y.domain()[0]) / (y.domain()[1] - y.domain()[0]) * nv.utils.availableHeight(height, container, margin)
                         };
 
                         mDispatch({
@@ -331,17 +334,36 @@ nv.models.scatter = function() {
                             seriesIndex: d.series,
                             pointIndex: d.point,
                             event: d3.event,
-                            element: el
+                            element: el,
+                            selected: d.selected
                         });
                     };
 
                     pointPaths
-                        .on('click', function(d) {
-                            mouseEventCallback(this, d, dispatch.elementClick);
+                        .each(function(d){
+                            var delay = null;
+                            var el = this
+                            var ss = interact(this);
+                            delete ss._iEvents['tap'];
+                            delete ss._iEvents['doubletap'];
+                            ss.on('tap',function(e){
+                                e.preventDefault();
+                                clearTimeout(delay);
+                                delay = setTimeout(function(){
+                                    mouseEventCallback(el, d, dispatch.elementClick);
+                                },300);
+                            }).on('doubletap hold',function(e){
+                                e.preventDefault();
+                                clearTimeout(delay);
+                                mouseEventCallback(el, d, dispatch.elementDblClick);
+                            })
                         })
-                        .on('dblclick', function(d) {
-                            mouseEventCallback(this, d, dispatch.elementDblClick);
-                        })
+                        // .on('click', function(d) {
+                        //     mouseEventCallback(this, d, dispatch.elementClick);
+                        // })
+                        // .on('dblclick', function(d) {
+                        //     mouseEventCallback(this, d, dispatch.elementDblClick);
+                        // })
                         .on('mouseover', function(d) {
                             mouseEventCallback(this, d, dispatch.elementMouseover);
                         })
@@ -507,11 +529,12 @@ nv.models.scatter = function() {
                     .style('stroke-opacity', 0)
                     .style('fill-opacity', 1)
                     .attr('transform', function(d) {
-                        var dx = nv.utils.NaNtoZero(x0(getX(d[0],d[1]))) + Math.sqrt(z(getSize(d[0],d[1]))/Math.PI) + 2;
+                    var dx = nv.utils.NaNtoZero(x0(getX(d[0],d[1]))) /*+ Math.sqrt(z(getSize(d[0],d[1]))/Math.PI) + 2*/;
                         return 'translate(' + dx + ',' + nv.utils.NaNtoZero(y0(getY(d[0],d[1]))) + ')';
                     })
                     .text(function(d,i){
-                        return d[0].label;});
+                        return Math.sqrt(z(getSize(d[0],d[1]))/Math.PI) > 12 ? d[0].label : ""; 
+                    });
 
                 titles.exit().remove();
                 groups.exit().selectAll('path.nv-label')

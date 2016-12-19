@@ -132,7 +132,8 @@ nv.models.focus = function(content) {
             var gBrush = g.select('.nv-x.nv-brush')
                 .call(brush);
             gBrush.selectAll('rect')
-                .attr('height', availableHeight);
+                .attr('height', availableHeight)
+                .style('pointer-events',arhat.isPlay ? 'none':'all');
             gBrush.selectAll('.resize').append('path').attr('d', resizePath);
 
             onBrush(true);
@@ -216,6 +217,12 @@ nv.models.focus = function(content) {
                     dispatch.onBrush(extent);
                 }
             }
+
+            brush.update = function () {
+                gBrush.call(brush);
+                gBrush.style('pointer-events',arhat.isPlay ? 'none':'all'); //arhat hack
+                onBrush();
+            };
         });
 
         renderWatch.renderEnd('focus immediate');

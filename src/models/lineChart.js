@@ -1,4 +1,4 @@
-nv.models.lineChart = function() {
+nv.models.lineChart = function () {
     "use strict";
 
     //============================================================
@@ -14,7 +14,7 @@ nv.models.lineChart = function() {
         , focus = nv.models.focus(nv.models.historicalBar())
         ;
 
-    var margin = {top: 30, right: 20, bottom: 50, left: 60}
+    var margin = { top: 10, right: 20, bottom: 50, left: 60 }
         , marginTop = null
         , color = nv.utils.defaultColor()
         , width = null
@@ -42,15 +42,15 @@ nv.models.lineChart = function() {
 
     lines.clipEdge(true).duration(0);
 
-    tooltip.valueFormatter(function(d, i) {
+    tooltip.valueFormatter(function (d, i) {
         return yAxis.tickFormat()(d, i);
-    }).headerFormatter(function(d, i) {
+    }).headerFormatter(function (d, i) {
         return xAxis.tickFormat()(d, i);
     });
 
-    interactiveLayer.tooltip.valueFormatter(function(d, i) {
+    interactiveLayer.tooltip.valueFormatter(function (d, i) {
         return yAxis.tickFormat()(d, i);
-    }).headerFormatter(function(d, i) {
+    }).headerFormatter(function (d, i) {
         return xAxis.tickFormat()(d, i);
     });
 
@@ -61,18 +61,18 @@ nv.models.lineChart = function() {
 
     var renderWatch = nv.utils.renderWatch(dispatch, duration);
 
-    var stateGetter = function(data) {
-        return function(){
+    var stateGetter = function (data) {
+        return function () {
             return {
-                active: data.map(function(d) { return !d.disabled; })
+                active: data.map(function (d) { return !d.disabled; })
             };
         };
     };
 
-    var stateSetter = function(data) {
-        return function(state) {
+    var stateSetter = function (data) {
+        return function (state) {
             if (state.active !== undefined)
-                data.forEach(function(series,i) {
+                data.forEach(function (series, i) {
                     series.disabled = !state.active[i];
                 });
         };
@@ -84,17 +84,17 @@ nv.models.lineChart = function() {
         if (showXAxis) renderWatch.models(xAxis);
         if (showYAxis) renderWatch.models(yAxis);
 
-        selection.each(function(chartData) {
-            var data,line2Data;
-            if(chartData.length){ line2Data = data = chartData;}else{data = chartData.lineData; line2Data = chartData.line2Data;}
+        selection.each(function (chartData) {
+            var data, line2Data;
+            if (chartData.length) { line2Data = data = chartData; } else { data = chartData.lineData; line2Data = chartData.line2Data; }
 
             var container = d3.select(this);
             nv.utils.initSVG(container);
             var availableWidth = nv.utils.availableWidth(width, container, margin),
                 availableHeight = nv.utils.availableHeight(height, container, margin) - (focusEnable ? focus.height() : 0);
-            chart.update = function() {
-                if( duration === 0 ) {
-                    container.call( chart );
+            chart.update = function () {
+                if (duration === 0) {
+                    container.call(chart);
                 } else {
                     container.transition().duration(duration).call(chart);
                 }
@@ -107,7 +107,7 @@ nv.models.lineChart = function() {
                 .update();
 
             // DEPRECATED set state.disabled
-            state.disabled = data.map(function(d) { return !!d.disabled; });
+            state.disabled = data.map(function (d) { return !!d.disabled; });
 
             if (!defaultState) {
                 var key;
@@ -121,7 +121,7 @@ nv.models.lineChart = function() {
             }
 
             // Display noData message if there's nothing to show.
-            if (!data || !data.length || !data.filter(function(d) { return d.values.length; }).length) {
+            if (!data || !data.length || !data.filter(function (d) { return d.values.length; }).length) {
                 nv.utils.noData(chart, container);
                 return chart;
             } else {
@@ -129,7 +129,7 @@ nv.models.lineChart = function() {
             }
 
             /* Update `main' graph on brush update. */
-            focus.dispatch.on("onBrush", function(extent) {
+            focus.dispatch.on("onBrush", function (extent) {
                 onBrush(extent);
             });
 
@@ -164,10 +164,10 @@ nv.models.lineChart = function() {
                     .call(legend);
 
                 if (legendPosition === 'bottom') {
-                     margin.bottom = xAxis.height() + legend.height();
-                     availableHeight = nv.utils.availableHeight(height, container, margin);
-                     g.select('.nv-legendWrap')
-                         .attr('transform', 'translate(0,' + (availableHeight + xAxis.height())  +')');
+                    margin.bottom = xAxis.height() + legend.height();
+                    availableHeight = nv.utils.availableHeight(height, container, margin);
+                    g.select('.nv-legendWrap')
+                        .attr('transform', 'translate(0,' + (availableHeight + xAxis.height()) + ')');
                 } else if (legendPosition === 'top') {
                     if (!marginTop && legend.height() !== margin.top) {
                         margin.top = legend.height();
@@ -175,7 +175,7 @@ nv.models.lineChart = function() {
                     }
 
                     wrap.select('.nv-legendWrap')
-                        .attr('transform', 'translate(0,' + (-margin.top) +')');
+                        .attr('transform', 'translate(0,' + (-margin.top) + ')');
                 }
             }
 
@@ -191,7 +191,7 @@ nv.models.lineChart = function() {
                 interactiveLayer
                     .width(availableWidth)
                     .height(availableHeight)
-                    .margin({left:margin.left, top:margin.top})
+                    .margin({ left: margin.left, top: margin.top })
                     .svgContainer(container)
                     .xScale(x);
                 wrap.select(".nv-interactive").call(interactiveLayer);
@@ -204,50 +204,50 @@ nv.models.lineChart = function() {
             lines
                 .width(availableWidth)
                 .height(availableHeight)
-                .color(data.map(function(d,i) {
+                .color(data.map(function (d, i) {
                     return d.color || color(d, i);
-                }).filter(function(d,i) { return !data[i].disabled; }));
+                }).filter(function (d, i) { return !data[i].disabled; }));
 
             var linesWrap = g.select('.nv-linesWrap')
-                .datum(data.filter(function(d) { return !d.disabled; }));
+                .datum(data.filter(function (d) { return !d.disabled; }));
 
 
             // Setup Main (Focus) Axes
             if (showXAxis) {
                 xAxis
                     .scale(x)
-                    ._ticks(nv.utils.calcTicksX(availableWidth/100, data) )
+                    ._ticks(nv.utils.calcTicksX(availableWidth / 100, data))
                     .tickSize(-availableHeight, 0);
             }
 
             if (showYAxis) {
                 yAxis
                     .scale(y)
-                    ._ticks( nv.utils.calcTicksY(availableHeight/36, data) )
-                    .tickSize( -availableWidth, 0);
+                    ._ticks(nv.utils.calcTicksY(availableHeight / 36, data))
+                    .tickSize(-availableWidth, 0);
             }
 
             //============================================================
             // Update Axes
             //============================================================
             function updateXAxis() {
-              if(showXAxis) {
-                g.select('.nv-focus .nv-x.nv-axis')
-                  .transition()
-                  .duration(duration)
-                  .call(xAxis)
-                ;
-              }
+                if (showXAxis) {
+                    g.select('.nv-focus .nv-x.nv-axis')
+                        .transition()
+                        .duration(duration)
+                        .call(xAxis)
+                        ;
+                }
             }
 
             function updateYAxis() {
-              if(showYAxis) {
-                g.select('.nv-focus .nv-y.nv-axis')
-                  .transition()
-                  .duration(duration)
-                  .call(yAxis)
-                ;
-              }
+                if (showYAxis) {
+                    g.select('.nv-focus .nv-y.nv-axis')
+                        .transition()
+                        .duration(duration)
+                        .call(yAxis)
+                        ;
+                }
             }
 
             g.select('.nv-focus .nv-x.nv-axis')
@@ -257,6 +257,7 @@ nv.models.lineChart = function() {
             // Update Focus
             //============================================================
             if (!focusEnable && focus.brush.extent() === null) {
+
                 linesWrap.call(lines);
                 updateXAxis();
                 updateYAxis();
@@ -264,8 +265,8 @@ nv.models.lineChart = function() {
                 focus.width(availableWidth);
                 g.select('.nv-focusWrap')
                     .style('display', focusEnable ? 'initial' : 'none')
-                    .attr('transform', 'translate(0,' + ( availableHeight + margin.bottom + focus.margin().top) + ')')
-                    .datum(line2Data.filter(function(d) { return !d.disabled; }))
+                    .attr('transform', 'translate(0,' + (availableHeight + margin.bottom + focus.margin().top) + ')')
+                    .datum(line2Data.filter(function (d) { return !d.disabled; }))
                     .call(focus);
                 var extent = focus.brush.empty() ? focus.xDomain() : focus.brush.extent();
                 if (extent) {
@@ -276,30 +277,30 @@ nv.models.lineChart = function() {
             // Event Handling/Dispatching (in chart's scope)
             //------------------------------------------------------------
 
-            legend.dispatch.on('stateChange', function(newState) {
+            legend.dispatch.on('stateChange', function (newState) {
                 for (var key in newState)
                     state[key] = newState[key];
                 dispatch.stateChange(state);
                 chart.update();
             });
 
-            interactiveLayer.dispatch.on('elementMousemove', function(e) {
+            interactiveLayer.dispatch.on('elementMousemove', function (e) {
                 lines.clearHighlights();
                 var singlePoint, pointIndex, pointXLocation, allData = [];
                 data
-                    .filter(function(series, i) {
+                    .filter(function (series, i) {
                         series.seriesIndex = i;
                         return !series.disabled && !series.disableTooltip;
                     })
-                    .forEach(function(series,i) {
+                    .forEach(function (series, i) {
                         var extent = focus.brush.extent() !== null ? (focus.brush.empty() ? focus.xScale().domain() : focus.brush.extent()) : x.domain();
-                        var currentValues = series.values.filter(function(d,i) {
+                        var currentValues = series.values.filter(function (d, i) {
                             // Checks if the x point is between the extents, handling case where extent[0] is greater than extent[1]
                             // (e.g. x domain is manually set to reverse the x-axis)
-                            if(extent[0] <= extent[1]) {
-                                return lines.x()(d,i) >= extent[0] && lines.x()(d,i) <= extent[1];
+                            if (extent[0] <= extent[1]) {
+                                return lines.x()(d, i) >= extent[0] && lines.x()(d, i) <= extent[1];
                             } else {
-                                return lines.x()(d,i) >= extent[1] && lines.x()(d,i) <= extent[0];
+                                return lines.x()(d, i) >= extent[1] && lines.x()(d, i) <= extent[0];
                             }
                         });
 
@@ -311,11 +312,11 @@ nv.models.lineChart = function() {
                         }
                         if (point === undefined) return;
                         if (singlePoint === undefined) singlePoint = point;
-                        if (pointXLocation === undefined) pointXLocation = chart.xScale()(chart.x()(point,pointIndex));
+                        if (pointXLocation === undefined) pointXLocation = chart.xScale()(chart.x()(point, pointIndex));
                         allData.push({
                             key: series.key,
                             value: pointYValue,
-                            color: color(series,series.seriesIndex),
+                            color: color(series, series.seriesIndex),
                             data: point
                         });
                     });
@@ -324,19 +325,19 @@ nv.models.lineChart = function() {
                     var yValue = chart.yScale().invert(e.mouseY);
                     var domainExtent = Math.abs(chart.yScale().domain()[0] - chart.yScale().domain()[1]);
                     var threshold = 0.03 * domainExtent;
-                    var indexToHighlight = nv.nearestValueIndex(allData.map(function(d){return d.value;}),yValue,threshold);
+                    var indexToHighlight = nv.nearestValueIndex(allData.map(function (d) { return d.value; }), yValue, threshold);
                     if (indexToHighlight !== null)
                         allData[indexToHighlight].highlight = true;
                 }
 
-                var defaultValueFormatter = function(d,i) {
+                var defaultValueFormatter = function (d, i) {
                     return d == null ? "N/A" : yAxis.tickFormat()(d);
                 };
 
                 interactiveLayer.tooltip
                     .valueFormatter(interactiveLayer.tooltip.valueFormatter() || defaultValueFormatter)
                     .data({
-                        value: chart.x()( singlePoint,pointIndex ),
+                        value: chart.x()(singlePoint, pointIndex),
                         index: pointIndex,
                         series: allData
                     })();
@@ -345,18 +346,18 @@ nv.models.lineChart = function() {
 
             });
 
-            interactiveLayer.dispatch.on('elementClick', function(e) {
+            interactiveLayer.dispatch.on('elementClick', function (e) {
                 var pointXLocation, allData = [];
 
-                data.filter(function(series, i) {
+                data.filter(function (series, i) {
                     series.seriesIndex = i;
                     return !series.disabled;
-                }).forEach(function(series) {
+                }).forEach(function (series) {
                     var pointIndex = nv.interactiveBisect(series.values, e.pointXValue, chart.x());
                     var point = series.values[pointIndex];
                     if (typeof point === 'undefined') return;
-                    if (typeof pointXLocation === 'undefined') pointXLocation = chart.xScale()(chart.x()(point,pointIndex));
-                    var yPos = chart.yScale()(chart.y()(point,pointIndex));
+                    if (typeof pointXLocation === 'undefined') pointXLocation = chart.xScale()(chart.x()(point, pointIndex));
+                    var yPos = chart.yScale()(chart.y()(point, pointIndex));
                     allData.push({
                         point: point,
                         pointIndex: pointIndex,
@@ -369,13 +370,13 @@ nv.models.lineChart = function() {
                 lines.dispatch.elementClick(allData);
             });
 
-            interactiveLayer.dispatch.on("elementMouseout",function(e) {
+            interactiveLayer.dispatch.on("elementMouseout", function (e) {
                 lines.clearHighlights();
             });
 
-            dispatch.on('changeState', function(e) {
+            dispatch.on('changeState', function (e) {
                 if (typeof e.disabled !== 'undefined' && data.length === e.disabled.length) {
-                    data.forEach(function(series,i) {
+                    data.forEach(function (series, i) {
                         series.disabled = e.disabled[i];
                     });
 
@@ -406,21 +407,37 @@ nv.models.lineChart = function() {
 
             function onBrush(extent) {
                 // Update Main (Focus)
+
+                var updateData = data.filter(function (d) { return !d.disabled; })
+                    .map(function (d, i) {
+                        return {
+                            key: d.key,
+                            area: d.area,
+                            classed: d.classed,
+                            values: d.values.filter(function (d, i) {
+                                return lines.x()(d, i) >= extent[0] && lines.x()(d, i) <= extent[1];
+                            }),
+                            disableTooltip: d.disableTooltip
+                        };
+                    });
+
+                var maxDomain;
+                if (stackedEnable) {
+                    maxDomain = d3.max(line2Data[0].values.map(function (d, i) {
+                        return lines.y()(d, i);
+                    }))
+                } else {
+                    maxDomain = d3.max(updateData.map(function (d, i) {
+                        return d3.max(d.values.map(function (d, i) {
+                            return lines.y()(d, i);
+                        }))
+                    }));
+                }
+
+                lines.forceY([0, maxDomain * 1.1]);
+
                 var focusLinesWrap = g.select('.nv-focus .nv-linesWrap')
-                    .datum(
-                    data.filter(function(d) { return !d.disabled; })
-                        .map(function(d,i) {
-                            return {
-                                key: d.key,
-                                area: d.area,
-                                classed: d.classed,
-                                values: d.values.filter(function(d,i) {
-                                    return lines.x()(d,i) >= extent[0] && lines.x()(d,i) <= extent[1];
-                                }),
-                                disableTooltip: d.disableTooltip
-                            };
-                        })
-                );
+                    .datum(updateData);
                 focusLinesWrap.transition().duration(duration).call(lines);
 
                 // Update Main (Focus) Axes
@@ -438,13 +455,13 @@ nv.models.lineChart = function() {
     // Event Handling/Dispatching (out of chart's scope)
     //------------------------------------------------------------
 
-    lines.dispatch.on('elementMouseover.tooltip', function(evt) {
-        if(!evt.series.disableTooltip){
+    lines.dispatch.on('elementMouseover.tooltip', function (evt) {
+        if (!evt.series.disableTooltip) {
             tooltip.data(evt).hidden(false);
         }
     });
 
-    lines.dispatch.on('elementMouseout.tooltip', function(evt) {
+    lines.dispatch.on('elementMouseout.tooltip', function (evt) {
         tooltip.hidden(true);
     });
 
@@ -469,86 +486,113 @@ nv.models.lineChart = function() {
 
     chart._options = Object.create({}, {
         // simple options, just get/set the necessary values
-        width:      {get: function(){return width;}, set: function(_){width=_;}},
-        height:     {get: function(){return height;}, set: function(_){height=_;}},
-        showLegend: {get: function(){return showLegend;}, set: function(_){showLegend=_;}},
-        legendPosition: {get: function(){return legendPosition;}, set: function(_){legendPosition=_;}},
-        showXAxis:      {get: function(){return showXAxis;}, set: function(_){showXAxis=_;}},
-        showYAxis:    {get: function(){return showYAxis;}, set: function(_){showYAxis=_;}},
-        defaultState:    {get: function(){return defaultState;}, set: function(_){defaultState=_;}},
-        noData:    {get: function(){return noData;}, set: function(_){noData=_;}},
+        width: { get: function () { return width; }, set: function (_) { width = _; } },
+        height: { get: function () { return height; }, set: function (_) { height = _; } },
+        showLegend: { get: function () { return showLegend; }, set: function (_) { showLegend = _; } },
+        legendPosition: { get: function () { return legendPosition; }, set: function (_) { legendPosition = _; } },
+        showXAxis: { get: function () { return showXAxis; }, set: function (_) { showXAxis = _; } },
+        showYAxis: { get: function () { return showYAxis; }, set: function (_) { showYAxis = _; } },
+        defaultState: { get: function () { return defaultState; }, set: function (_) { defaultState = _; } },
+        noData: { get: function () { return noData; }, set: function (_) { noData = _; } },
         // Focus options, mostly passed onto focus model.
-        focusEnable:    {get: function(){return focusEnable;}, set: function(_){focusEnable=_;}},
-        stackedEnable:    {get: function(){return stackedEnable;}, set: function(_){
-            stackedEnable=_;
-            lines.arhatArea(stackedEnable);
-        }},
-        focusHeight:     {get: function(){return focus.height();}, set: function(_){focus.height(_);}},
-        focusShowAxisX:    {get: function(){return focus.showXAxis();}, set: function(_){focus.showXAxis(_);}},
-        focusShowAxisY:    {get: function(){return focus.showYAxis();}, set: function(_){focus.showYAxis(_);}},
-        brushExtent: {get: function(){return focus.brushExtent();}, set: function(_){focus.brushExtent(_);}},
+        focusEnable: { get: function () { return focusEnable; }, set: function (_) { focusEnable = _; } },
+        stackedEnable: {
+            get: function () { return stackedEnable; }, set: function (_) {
+                stackedEnable = _;
+                lines.arhatArea(stackedEnable);
+            }
+        },
+        focusHeight: { get: function () { return focus.height(); }, set: function (_) { focus.height(_); } },
+        focusShowAxisX: { get: function () { return focus.showXAxis(); }, set: function (_) { focus.showXAxis(_); } },
+        focusShowAxisY: { get: function () { return focus.showYAxis(); }, set: function (_) { focus.showYAxis(_); } },
+        brushExtent: { get: function () { return focus.brushExtent(); }, set: function (_) { focus.brushExtent(_); } },
 
         // options that require extra logic in the setter
-        focusMargin: {get: function(){return focus.margin}, set: function(_){
-            if (_.top !== undefined) {
-                margin.top = _.top;
-                marginTop = _.top;
+        focusMargin: {
+            get: function () { return focus.margin }, set: function (_) {
+                if (_.top !== undefined) {
+                    margin.top = _.top;
+                    marginTop = _.top;
+                }
+                focus.margin.right = _.right !== undefined ? _.right : focus.margin.right;
+                focus.margin.bottom = _.bottom !== undefined ? _.bottom : focus.margin.bottom;
+                focus.margin.left = _.left !== undefined ? _.left : focus.margin.left;
             }
-            focus.margin.right  = _.right  !== undefined ? _.right  : focus.margin.right;
-            focus.margin.bottom = _.bottom !== undefined ? _.bottom : focus.margin.bottom;
-            focus.margin.left   = _.left   !== undefined ? _.left   : focus.margin.left;
-        }},
-        margin: {get: function(){return margin;}, set: function(_){
-            margin.top    = _.top    !== undefined ? _.top    : margin.top;
-            margin.right  = _.right  !== undefined ? _.right  : margin.right;
-            margin.bottom = _.bottom !== undefined ? _.bottom : margin.bottom;
-            margin.left   = _.left   !== undefined ? _.left   : margin.left;
-        }},
-        duration: {get: function(){return duration;}, set: function(_){
-            duration = _;
-            renderWatch.reset(duration);
-            lines.duration(duration);
-            focus.duration(duration);
-            xAxis.duration(duration);
-            yAxis.duration(duration);
-        }},
-        color:  {get: function(){return color;}, set: function(_){
-            color = nv.utils.getColor(_);
-            legend.color(color);
-            lines.color(color);
-            focus.color(color);
-        }},
-        interpolate: {get: function(){return lines.interpolate();}, set: function(_){
-            lines.interpolate(_);
-            // focus.interpolate(_);
-        }},
-        xTickFormat: {get: function(){return xAxis.tickFormat();}, set: function(_){
-            xAxis.tickFormat(_);
-            focus.xTickFormat(_);
-        }},
-        yTickFormat: {get: function(){return yAxis.tickFormat();}, set: function(_){
-            yAxis.tickFormat(_);
-            focus.yTickFormat(_);
-        }},
-        x: {get: function(){return lines.x();}, set: function(_){
-            lines.x(_);
-            focus.x(_);
-        }},
-        y: {get: function(){return lines.y();}, set: function(_){
-            lines.y(_);
-            focus.y(_);
-        }},
-        rightAlignYAxis: {get: function(){return rightAlignYAxis;}, set: function(_){
-            rightAlignYAxis = _;
-            yAxis.orient( rightAlignYAxis ? 'right' : 'left');
-        }},
-        useInteractiveGuideline: {get: function(){return useInteractiveGuideline;}, set: function(_){
-            useInteractiveGuideline = _;
-            if (useInteractiveGuideline) {
-                lines.interactive(false);
-                lines.useVoronoi(false);
+        },
+        margin: {
+            get: function () { return margin; }, set: function (_) {
+                if (_.top !== undefined) {
+                    margin.top = _.top;
+                    marginTop = _.top;
+                }
+                margin.right = _.right !== undefined ? _.right : margin.right;
+                margin.bottom = _.bottom !== undefined ? _.bottom : margin.bottom;
+                margin.left = _.left !== undefined ? _.left : margin.left;
             }
-        }}
+        },
+        duration: {
+            get: function () { return duration; }, set: function (_) {
+                duration = _;
+                renderWatch.reset(duration);
+                lines.duration(duration);
+                focus.duration(duration);
+                xAxis.duration(duration);
+                yAxis.duration(duration);
+            }
+        },
+        color: {
+            get: function () { return color; }, set: function (_) {
+                color = nv.utils.getColor(_);
+                legend.color(color);
+                lines.color(color);
+                focus.color(color);
+            }
+        },
+        interpolate: {
+            get: function () { return lines.interpolate(); }, set: function (_) {
+                lines.interpolate(_);
+                // focus.interpolate(_);
+            }
+        },
+        xTickFormat: {
+            get: function () { return xAxis.tickFormat(); }, set: function (_) {
+                xAxis.tickFormat(_);
+                focus.xTickFormat(_);
+            }
+        },
+        yTickFormat: {
+            get: function () { return yAxis.tickFormat(); }, set: function (_) {
+                yAxis.tickFormat(_);
+                focus.yTickFormat(_);
+            }
+        },
+        x: {
+            get: function () { return lines.x(); }, set: function (_) {
+                lines.x(_);
+                focus.x(_);
+            }
+        },
+        y: {
+            get: function () { return lines.y(); }, set: function (_) {
+                lines.y(_);
+                focus.y(_);
+            }
+        },
+        rightAlignYAxis: {
+            get: function () { return rightAlignYAxis; }, set: function (_) {
+                rightAlignYAxis = _;
+                yAxis.orient(rightAlignYAxis ? 'right' : 'left');
+            }
+        },
+        useInteractiveGuideline: {
+            get: function () { return useInteractiveGuideline; }, set: function (_) {
+                useInteractiveGuideline = _;
+                if (useInteractiveGuideline) {
+                    lines.interactive(false);
+                    lines.useVoronoi(false);
+                }
+            }
+        }
     });
 
     nv.utils.inheritOptions(chart, lines);
@@ -557,8 +601,8 @@ nv.models.lineChart = function() {
     return chart;
 };
 
-nv.models.lineWithFocusChart = function() {
-  return nv.models.lineChart()
-    .margin({ bottom: 30 })
-    .focusEnable( true );
+nv.models.lineWithFocusChart = function () {
+    return nv.models.lineChart()
+        .margin({ bottom: 30 })
+        .focusEnable(true);
 };
