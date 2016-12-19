@@ -223,6 +223,8 @@ nv.models.focus = function(content) {
                 gBrush.style('pointer-events',arhat.isPlay ? 'none':'all'); //arhat hack
                 onBrush();
             };
+
+            chart.defaultDomain = x.domain();
         });
 
         renderWatch.renderEnd('focus immediate');
