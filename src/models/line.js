@@ -110,8 +110,12 @@ nv.models.line = function () {
                     return (d.classed || '') + ' nv-group nv-series-' + i;
                 })
                 .classed('hover', function (d) { return d.hover })
-                .style('fill', function (d, i) { return color(d, i) })
-                .style('stroke', function (d, i) { return color(d, i) });
+                .style('fill', function(d,i){ //arhat hack
+                    return d.selected ? d.color || color(d, i) : '#ccc';
+                })
+                .style('stroke', function(d,i){
+                    return d.selected ? d.color || color(d, i) : '#ccc';
+                });
             groups.watchTransition(renderWatch, 'line: groups')
                 .style('stroke-opacity', 1)
                 .style('fill-opacity', function (d) { return d.fillOpacity || .5 });

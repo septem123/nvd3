@@ -456,8 +456,8 @@ nv.models.scatter = function() {
                 .classed('nv-noninteractive', !interactive)
                 .classed('hover', function(d) { return d.hover });
             groups.watchTransition(renderWatch, 'scatter: groups')
-                .style('fill', function(d,i) { return color(d, i) })
-                .style('stroke', function(d,i) { return d.pointBorderColor || pointBorderColor || color(d, i) })
+                .style('fill', function(d,i) { return d.color || color(d, i) })
+                .style('stroke', function(d,i) { return d.color || d.pointBorderColor || pointBorderColor || color(d, i) })
                 .style('stroke-opacity', 1)
                 .style('fill-opacity', .5);
 

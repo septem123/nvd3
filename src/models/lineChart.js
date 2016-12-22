@@ -412,8 +412,10 @@ nv.models.lineChart = function () {
                     .map(function (d, i) {
                         return {
                             key: d.key,
+                            selected: d.selected,
                             area: d.area,
                             classed: d.classed,
+                            color: d.color,
                             values: d.values.filter(function (d, i) {
                                 return lines.x()(d, i) >= extent[0] && lines.x()(d, i) <= extent[1];
                             }),
@@ -427,7 +429,7 @@ nv.models.lineChart = function () {
                         return lines.y()(d, i);
                     }))
                 } else {
-                    maxDomain = d3.max(updateData.map(function (d, i) {
+                    maxDomain = d3.max(data.map(function (d, i) {
                         return d3.max(d.values.map(function (d, i) {
                             return lines.y()(d, i);
                         }))
