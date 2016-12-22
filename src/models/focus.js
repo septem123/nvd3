@@ -224,7 +224,6 @@ nv.models.focus = function(content) {
                 onBrush();
             };
 
-            chart.defaultDomain = x.domain();
         });
 
         renderWatch.renderEnd('focus immediate');

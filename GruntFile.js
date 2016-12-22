@@ -45,6 +45,8 @@ module.exports = function(grunt) {
                     '!src/models/cumulativeLine*',
                     '!src/models/discreteBar*',
                     '!src/models/forceDirectedGraph*',
+                    '!src/models/historicalBar*',
+                    '!src/models/linePlusBarChart*',
                     '!src/models/ohlc*',
                     '!src/models/parallelCoordinates*',
                     '!src/models/sankey*',

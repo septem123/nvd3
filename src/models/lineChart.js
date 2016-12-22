@@ -11,7 +11,7 @@ nv.models.lineChart = function () {
         , legend = nv.models.legend()
         , interactiveLayer = nv.interactiveGuideline()
         , tooltip = nv.models.tooltip()
-        , focus = nv.models.focus(nv.models.historicalBar())
+        , focus = nv.models.focus()
         ;
 
     var margin = { top: 10, right: 20, bottom: 50, left: 60 }
@@ -85,8 +85,8 @@ nv.models.lineChart = function () {
         if (showYAxis) renderWatch.models(yAxis);
 
         selection.each(function (chartData) {
-            var data, line2Data;
-            if (chartData.length) { line2Data = data = chartData; } else { data = chartData.lineData; line2Data = chartData.line2Data; }
+            var data, sumData;
+            if (chartData.length) { sumData = data = chartData; } else { data = chartData.lineData; sumData = chartData.sumData; }
 
             var container = d3.select(this);
             nv.utils.initSVG(container);
@@ -266,7 +266,7 @@ nv.models.lineChart = function () {
                 g.select('.nv-focusWrap')
                     .style('display', focusEnable ? 'initial' : 'none')
                     .attr('transform', 'translate(0,' + (availableHeight + margin.bottom + focus.margin().top) + ')')
-                    .datum(line2Data.filter(function (d) { return !d.disabled; }))
+                    .datum(data.filter(function (d) { return !d.disabled; }))
                     .call(focus);
                 var extent = focus.brush.empty() ? focus.xDomain() : focus.brush.extent();
                 if (extent) {
@@ -423,7 +423,7 @@ nv.models.lineChart = function () {
 
                 var maxDomain;
                 if (stackedEnable) {
-                    maxDomain = d3.max(line2Data[0].values.map(function (d, i) {
+                    maxDomain = d3.max(sumData[0].values.map(function (d, i) {
                         return lines.y()(d, i);
                     }))
                 } else {
@@ -500,6 +500,7 @@ nv.models.lineChart = function () {
             get: function () { return stackedEnable; }, set: function (_) {
                 stackedEnable = _;
                 lines.arhatArea(stackedEnable);
+                focus.arhatArea(stackedEnable);
             }
         },
         focusHeight: { get: function () { return focus.height(); }, set: function (_) { focus.height(_); } },
