@@ -88,6 +88,8 @@ nv.models.lineChart = function () {
             var data, sumData;
             if (chartData.length) { sumData = data = chartData; } else { data = chartData.lineData; sumData = chartData.sumData; }
 
+            if (focusEnable) margin.bottom = 0;
+
             var container = d3.select(this);
             nv.utils.initSVG(container);
             var availableWidth = nv.utils.availableWidth(width, container, margin),
